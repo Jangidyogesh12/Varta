@@ -15,41 +15,31 @@ def log_function_call(func):
     return wrapper
 
 
-class EmbedPipeline:
+@log_function_call
+def generate_Embeddings(path):
     """
-    EmbedPipeline class for processing and embedding text data.
+    Generates the embedding out of the chunks of data
+
+    Returns:
+    - list: A list of embedding of dimensions 768
     """
+    model = load_embedder()
+    chunks = generate_chunks(path)
+    embeddings = model.encode(chunks)
+    return chunks, embeddings
 
-    def __init__(self):
-        """
-        Constructor for EmbedPipeline.
-        """
-        self.database = CRUD("Embeddings")
 
-    @log_function_call
-    def generate_Embeddings(self, path):
-        """
-        Generates the embedding out of the chunks of data
+@log_function_call
+def add_embedding_to_database(self, path: str, name: str):
+    """
+    This finction adds the ebedding to the database
+    """
+    database = CRUD(name)
+    chunks, embeddings = generate_Embeddings(path)
+    for chunk, embedding in zip(chunks, embeddings):
+        database.insert(chunk, embedding)
 
-        Returns:
-        - list: A list of embedding of dimensions 768
-        """
-        model = load_embedder()
-        chunks = generate_chunks(path)
-        embeddings = model.encode(chunks)
-        return chunks, embeddings
-
-    @log_function_call
-    def add_embedding_to_database(self, path):
-        """
-        This finction adds the ebedding to the database
-        """
-        self.database.clear_tables()
-        chunks, embeddings = self.generate_Embeddings(path)
-        for chunk, embedding in zip(chunks, embeddings):
-            self.database.insert(chunk, embedding)
-
-        logger.info(
-            f"The Embeddings has been added to the database table:{self.database.table_name} Successfully"
-        )
-        self.database.close_db()
+    logger.info(
+        f"The Embeddings has been added to the database table:{self.database.table_name} Successfully"
+    )
+    database.close_db()
