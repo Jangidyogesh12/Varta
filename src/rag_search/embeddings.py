@@ -2,7 +2,6 @@ from database.embed_database import CRUD
 from functools import wraps
 from loguru import logger
 from utils import generate_chunks, load_embedder
-import time
 
 
 # Decorator for logging
@@ -30,16 +29,17 @@ def generate_Embeddings(path):
 
 
 @log_function_call
-def add_embedding_to_database(self, path: str, name: str):
+def add_embedding_to_database(path: str):
     """
     This finction adds the ebedding to the database
     """
-    database = CRUD(name)
+    database = CRUD("Embeddings")
+    database.clear_tables()
     chunks, embeddings = generate_Embeddings(path)
     for chunk, embedding in zip(chunks, embeddings):
         database.insert(chunk, embedding)
 
     logger.info(
-        f"The Embeddings has been added to the database table:{self.database.table_name} Successfully"
+        f"The Embeddings has been added to the database table:{database.table_name} Successfully"
     )
     database.close_db()

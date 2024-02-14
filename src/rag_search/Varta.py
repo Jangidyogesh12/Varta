@@ -3,10 +3,9 @@ import faiss
 from database.embed_database import CRUD
 from utils import load_embedder, get_chunk_from_database
 from data_pipeline.parsers import doc_parser
-from embeddings import add_embedding_to_database
 
 
-def get_answer_of_query(query, k=5):
+def get_answer_of_query(query, k=8):
     embedder = load_embedder()
     q_vec = embedder.encode(doc_parser(query).chunker())
     database = CRUD("Embeddings")
@@ -26,12 +25,12 @@ def get_answer_of_query(query, k=5):
 response_cache = {}
 
 
-def generate_response(question):
+def generate_response(question, model):
     rag_response = get_answer_of_query(question)
     url = "https://api.together.xyz/v1/completions"
 
     payload = {
-        "model": "mistralai/Mixtral-8x7B-Instruct-v0.1",
+        "model": f"{model}",
         "prompt": f"<s>[INST] {rag_response} [/INST]",
         "max_tokens": 512,
         "stop": ["</s>", "[/INST]"],
