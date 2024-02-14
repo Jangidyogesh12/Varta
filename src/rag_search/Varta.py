@@ -31,7 +31,7 @@ def generate_response(question, model):
 
     payload = {
         "model": f"{model}",
-        "prompt": f"<s>[INST] {rag_response} [/INST]",
+        "prompt": f"<s>[INST] {rag_response, question} [/INST]",
         "max_tokens": 512,
         "stop": ["</s>", "[/INST]"],
         "temperature": 0.7,
@@ -43,7 +43,7 @@ def generate_response(question, model):
     headers = {
         "accept": "application/json",
         "content-type": "application/json",
-        "Authorization": "Bearer d6a921d91b8b7d802a005b3d7293b22e0a53c907e6d929af725030f5a9abebf7",
+        "Authorization": "API key",
     }
 
     # Check if the response is already cached
