@@ -1,6 +1,5 @@
 import streamlit as st
 from Varta import generate_response
-from embeddings import add_embedding_to_database
 
 st.set_page_config(page_title="Varta", page_icon="🤖")
 with st.sidebar:

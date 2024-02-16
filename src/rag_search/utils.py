@@ -1,5 +1,6 @@
 from data_pipeline.document_loader import load
 from data_pipeline.parsers import doc_parser
+
 from sentence_transformers import SentenceTransformer
 import numpy as np
 import sqlite3

@@ -3,9 +3,10 @@ import faiss
 from database.embed_database import CRUD
 from utils import load_embedder, get_chunk_from_database
 from data_pipeline.parsers import doc_parser
+from reranker import rerank
 
 
-def get_answer_of_query(query, k=8):
+def get_answer_of_query(query, k=25):
     embedder = load_embedder()
     q_vec = embedder.encode(doc_parser(query).chunker())
     database = CRUD("Embeddings")
@@ -18,7 +19,11 @@ def get_answer_of_query(query, k=8):
     for i in range(k):
         embd = embedding[ind[0][i]]
         data.append(get_chunk_from_database(embd))
-    return data
+    data = [d[0][0] for d in data]
+    return rerank(
+        query,
+        data,
+    )
 
 
 # Global dictionary to store cached responses
@@ -43,7 +48,7 @@ def generate_response(question, model):
     headers = {
         "accept": "application/json",
         "content-type": "application/json",
-        "Authorization": "API key",
+        "Authorization": "Bearer d6a921d91b8b7d802a005b3d7293b22e0a53c907e6d929af725030f5a9abebf7",
     }
 
     # Check if the response is already cached
@@ -64,3 +69,11 @@ def generate_response(question, model):
         return generated_text
     else:
         print("Error:", response.text)
+
+
+# if __name__ == "__main__":
+#     ans = generate_response(
+#         "what is an Autonomous underwater vehicle",
+#         model="mistralai/Mistral-7B-Instruct-v0.1",
+#     )
+#     print(ans)
